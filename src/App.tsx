@@ -1,19 +1,24 @@
-import react from 'react';
-import axios from 'axios';
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { PersonasPage } from "./paginas/pagPersonas";
+import { AutosPage } from "./paginas/AutosPage";
 
-import './App.css';
+function App() {
+  return (
+    <Router>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+        <Link className="navbar-brand" to="/">Inicio</Link>
+        <div className="navbar-nav">
+          <Link className="nav-link" to="/personas">Personas</Link>
+          <Link className="nav-link" to="/autos">Autos</Link>
+        </div>
+      </nav>
+      <Routes>
+        <Route path="/" element={<div className="container mt-4"><h1>Bienvenido</h1></div>} />
+        <Route path="/personas" element={<PersonasPage />} />
+        <Route path="/autos" element={<AutosPage />} />
+      </Routes>
+    </Router>
+  );
+}
 
-const serverUrl= 'http://localhost:3000/';
-
-const App: react.FC= ()=> {
-  const [message,setMessage]= react.useState<string | undefined>();
-  react.useEffect(()=>{
-    (async ()=>{
-      const response = await axios.get<string>(serverUrl);
-        setMessage(response.data);
-    })();
-  },[]);
-  return(<>{message=== undefined ? <h2>Loading...</h2>: <h2>{message}</h2>}</>);
-
-};
 export default App;
