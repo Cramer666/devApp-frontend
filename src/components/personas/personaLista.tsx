@@ -1,49 +1,70 @@
 import { useEffect, useState } from "react";
 import { Persona } from "../../models/persona";
-import { getPersonas, deletePersona, createPersona, updatePersona } from "../../services/personasServ";
-import { PersonaForm } from "./personaFormulario";
-import { PersonaTable } from "./personaTabla";
+import { getPersonas, deletePersona } from "../../services/personasServ";
+import { useNavigate } from "react-router-dom";
+import { ActionButtons } from "../comun/botonPrincipal";
 
 export const PersonaList = () => {
   const [personas, setPersonas] = useState<Persona[]>([]);
-  const [editando, setEditando] = useState<Persona | null>(null);
+  const navigate = useNavigate();
 
-  const cargar = () => {
+  const cargarPersonas = () => {
     getPersonas().then(res => setPersonas(res.data));
   };
 
-  useEffect(cargar, []);
+  useEffect(() => {
+    cargarPersonas();
+  }, []);
 
-  const handleSubmit = (p: Omit<Persona, "id">) => {
-    if (editando) {
-      updatePersona(editando.id, { ...editando, ...p }).then(() => {
-        cargar();
-        setEditando(null);
-      });
-    } else {
-      createPersona(p).then(cargar);
+  const handleDelete = (id: string) => {
+    if (confirm("¿Está seguro que desea eliminar esta persona?")) {
+      deletePersona(id)
+        .then(cargarPersonas)
+        .catch(error => console.error("Error eliminando persona:", error));
     }
   };
 
   return (
-    <div>
-      <h3>{editando ? "Editar persona" : "Agregar persona"}</h3>
-      <PersonaForm
-        key={editando?.id ?? "nueva"}
-        onSubmit={handleSubmit}
-        initial={editando ?? undefined}
-      />
-      {editando && (
-        <button className="btn btn-secondary mb-3" onClick={() => setEditando(null)}>
-          Cancelar edición
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>Personas</h1>
+        <button 
+          className="btn btn-success"
+          onClick={() => navigate('/personas/crear')}
+        >
+          <i className="bi bi-plus-circle me-2"></i>
+          Agregar nueva
         </button>
-      )}
-      <hr />
-      <PersonaTable
-        personas={personas}
-        onEdit={setEditando}
-        onDelete={p => deletePersona(p.id).then(cargar)}
-      />
+      </div>
+
+      <div className="table-responsive">
+        <table className="table table-striped table-hover">
+          <thead className="table-dark">
+            <tr>
+              <th>DNI</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {personas.map(persona => (
+              <tr key={persona.id}>
+                <td>{persona.dni}</td>
+                <td>{persona.nombre}</td>
+                <td>{persona.apellido}</td>
+                <td>
+                  <ActionButtons
+                    onView={() => navigate(`/personas/${persona.id}`)}
+                    onEdit={() => navigate(`/personas/editar/${persona.id}`)}
+                    onDelete={() => handleDelete(String(persona.id))}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
