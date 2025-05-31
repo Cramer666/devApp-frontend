@@ -7,10 +7,11 @@ import { getPersonas } from "../../services/personasServ";
 
 interface Props {
   isEditing?: boolean;
-  onSuccess?: () => void; // Nueva prop opcional
-  onError?: (error: Error) => void; // Nueva prop opcional
-  initialData?: Omit<Auto, "id">; // Para sobrescribir datos iniciales
-  disabledFields?: (keyof Auto)[]; // Campos a deshabilitar
+  onSubmit?: (auto: Omit<Auto, "id">) => void; 
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+  initialData?: Omit<Auto, "id">;
+  disabledFields?: (keyof Auto)[];
 }
 
 export const AutoForm: FC<Props> = ({ 
@@ -20,7 +21,6 @@ export const AutoForm: FC<Props> = ({
   initialData,
   disabledFields = []
 }) => {
-  // Estado inicial completo con todos los campos del modelo Auto
   const initialState: Omit<Auto, "id"> = {
     patente: "",
     marca: "",
@@ -40,19 +40,19 @@ export const AutoForm: FC<Props> = ({
   const { id } = useParams();
   const navigate = useNavigate();
 
-
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        const personasPromise = getPersonas();
-        const autoPromise = isEditing && id ? getAutoById(id) : Promise.resolve(null);
-        const [personasRes] = await Promise.all([personasPromise, autoPromise]);
+        const [personasRes, autoRes] = await Promise.all([
+          getPersonas(),
+          isEditing && id ? getAutoById(id) : Promise.resolve(null)
+        ]);
 
         setPersonas(personasRes.data);
 
-        if (isEditing && id) {
-          const auto = await getAutoById(id);
+        if (isEditing && id && autoRes) {
+          const auto = autoRes.data;
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { id: _, ...autoData } = auto;
           setForm(autoData);
@@ -69,7 +69,6 @@ export const AutoForm: FC<Props> = ({
     loadData();
   }, [isEditing, id, navigate, onError]);
 
-  // Manejar cambios en el formulario
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => {
@@ -84,10 +83,9 @@ export const AutoForm: FC<Props> = ({
     });
   };
 
-  // Validación antes de enviar
   const validateForm = (): boolean => {
     if (!form.patente || !form.marca || !form.modelo || !form.duenioId) {
-      alert("Por favor complete todos los campos requeridos");
+      alert("Por favor complete todos los campos requeridos, no sea imbecil !");
       return false;
     }
     if (form.anio < 1900 || form.anio > new Date().getFullYear() + 1) {
@@ -97,7 +95,6 @@ export const AutoForm: FC<Props> = ({
     return true;
   };
 
-  // Enviar formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -105,7 +102,7 @@ export const AutoForm: FC<Props> = ({
     setLoading(true);
     try {
       if (isEditing && id) {
-        await updateAuto(id, { ...form, id });
+        await updateAuto(id, { ...form, id } as Auto);
         onSuccess?.();
       } else {
         await createAuto(form);
@@ -115,7 +112,7 @@ export const AutoForm: FC<Props> = ({
     } catch (error) {
       console.error("Error saving auto:", error);
       onError?.(error as Error);
-      alert("Error al guardar el auto. Por favor intente nuevamente.");
+      alert("Error al guardar el auto. Reintente.");
     } finally {
       setLoading(false);
     }
@@ -139,7 +136,7 @@ export const AutoForm: FC<Props> = ({
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
-            {/* Grupo 1: Datos básicos */}
+            {/* Datos bsicos */}
             <div className="row g-3 mb-4">
               <div className="col-md-4">
                 <label className="form-label fw-bold">Patente <span className="text-danger">*</span></label>
@@ -182,7 +179,7 @@ export const AutoForm: FC<Props> = ({
               </div>
             </div>
 
-            {/* Grupo 2: Características técnicas */}
+            {/* Mas tecnicos */}
             <div className="row g-3 mb-4">
               <div className="col-md-3">
                 <label className="form-label fw-bold">Año <span className="text-danger">*</span></label>
@@ -239,7 +236,7 @@ export const AutoForm: FC<Props> = ({
               </div>
             </div>
 
-            {/* Grupo 3: Dueño */}
+            {/* Dueño */}
             <div className="row mb-4">
               <div className="col-md-6">
                 <label className="form-label fw-bold">Dueño <span className="text-danger">*</span></label>
