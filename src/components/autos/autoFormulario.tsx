@@ -85,22 +85,23 @@ export const AutoForm: FC<Props> = ({
 
   const validateForm = (): boolean => {
     if (!form.patente || !form.marca || !form.modelo || !form.duenioId) {
-      alert("Por favor complete todos los campos requeridos, no sea imbecil !");
+      alert("Por favor complete todos los campos, no sea imbecil !");
       return false;
     }
     if (form.anio < 1900 || form.anio > new Date().getFullYear() + 1) {
-      alert("El año del auto no es válido");
+      alert("El año del auto no es valido");
       return false;
     }
     return true;
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setLoading(true);
-    try {
+  
       if (isEditing && id) {
         await updateAuto(id, { ...form, id } as Auto);
         onSuccess?.();
@@ -109,13 +110,7 @@ export const AutoForm: FC<Props> = ({
         onSuccess?.();
       }
       navigate("/autos", { replace: true });
-    } catch (error) {
-      console.error("Error saving auto:", error);
-      onError?.(error as Error);
-      alert("Error al guardar el auto. Reintente.");
-    } finally {
-      setLoading(false);
-    }
+
   };
 
   if (loading) {
@@ -179,7 +174,7 @@ export const AutoForm: FC<Props> = ({
               </div>
             </div>
 
-            {/* Mas tecnicos */}
+            {/* Mas info */}
             <div className="row g-3 mb-4">
               <div className="col-md-3">
                 <label className="form-label fw-bold">Año <span className="text-danger">*</span></label>
@@ -243,7 +238,7 @@ export const AutoForm: FC<Props> = ({
                 <select
                   className={`form-select ${disabledFields.includes("duenioId") ? "bg-light" : ""}`}
                   name="duenioId"
-                  value={form.duenioId}
+                  value={form.duenioId ?? ""}
                   onChange={handleChange}
                   required
                   disabled={disabledFields.includes("duenioId") || personas.length === 0}
@@ -251,7 +246,7 @@ export const AutoForm: FC<Props> = ({
                   <option value="">{personas.length ? "Seleccione un dueño" : "Cargando dueños..."}</option>
                   {personas.map(p => (
                     <option key={p.id} value={p.id}>
-                      {p.nombre} {p.apellido} (DNI: {p.dni})
+                      {p.nombre} {p.apellido} (DNI: {p.DNI})
                     </option>
                   ))}
                 </select>

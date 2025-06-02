@@ -40,7 +40,7 @@ export const AutoList = () => {
     <div className="container mt-4">
       <div className="card">
         <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-          <h3 className="mb-0">Listado de Autos</h3>
+          <h3 className="mb-0">Autos</h3>
           <button 
             className="btn btn-light btn-sm"
             onClick={() => navigate('/autos/crear')}
@@ -82,9 +82,6 @@ export const AutoList = () => {
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>Año</th>
-                    <th>Color</th>
-                    <th>Chasis</th>
-                    <th>Motor</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -95,9 +92,6 @@ export const AutoList = () => {
                       <td>{auto.marca}</td>
                       <td>{auto.modelo}</td>
                       <td>{auto.anio}</td>
-                      <td>{auto.color}</td>
-                      <td>{auto.nroDeChasis}</td>
-                      <td>{auto.motor}</td>
                       <td>
                         <div className="d-flex gap-2">
                           <button 

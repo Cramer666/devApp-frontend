@@ -21,12 +21,11 @@ export const PersonaForm: FC<Props> = ({
     const initialState: Omit<Persona, "id"> = {
         nombre: "",
         apellido: "",
-        dni: "",
-        telefono: "",
-        email: "",
+        DNI: "",
         fechaDeNacimiento: new Date(),
-        genero: "",
+        genero: "Masculino",
         donante: false,
+        vehiculo: [],
         ...initialData
     };
 
@@ -54,7 +53,7 @@ export const PersonaForm: FC<Props> = ({
         }
     }, [isEditing, id, navigate, onError]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
         const { name, value } = e.target;
         setForm(prev => {
             const newValue = name === "donante" ? (e.target as HTMLInputElement).checked : value;
@@ -69,19 +68,19 @@ export const PersonaForm: FC<Props> = ({
     };
 
     const validateForm = (): boolean => {
-        if (!form.nombre || !form.apellido || !form.dni) {
+        if (!form.nombre || !form.apellido || !form.DNI) {
             alert("Por favor complete todos los campos requeridos");
             return false;
         }
         return true;
     };
 
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateForm()) return;
 
         setLoading(true);
-        try {
             if (isEditing && id) {
                 await updatePersona(id, form);
                 onSuccess?.();
@@ -90,13 +89,6 @@ export const PersonaForm: FC<Props> = ({
                 onSuccess?.();
             }
             navigate("/personas", { replace: true });
-        } catch (error) {
-            console.error("Error saving persona:", error);
-            onError?.(error as Error);
-            alert("Error al guardar la persona. Por favor intente nuevamente.");
-        } finally {
-            setLoading(false);
-        }
     };
 
     if (loading) {
@@ -117,7 +109,7 @@ export const PersonaForm: FC<Props> = ({
                 </div>
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
-                        {/* Grupo 1: Datos básicos */}
+                        {/* Datos basicos */}
                         <div className="row g-3 mb-4">
                             <div className="col-md-6">
                                 <label className="form-label fw-bold">Nombre <span className="text-danger">*</span></label>
@@ -146,62 +138,42 @@ export const PersonaForm: FC<Props> = ({
                             </div>
                         </div>
 
-                        {/* Grupo 2: Documentación */}
+                        {/* DNI*/}
                         <div className="row g-3 mb-4">
                             <div className="col-md-6">
                                 <label className="form-label fw-bold">DNI <span className="text-danger">*</span></label>
                                 <input
                                     type="text"
-                                    className={`form-control ${disabledFields.includes("dni") ? "bg-light" : ""}`}
-                                    name="dni"
-                                    value={form.dni}
+                                    className={`form-control ${disabledFields.includes("DNI") ? "bg-light" : ""}`}
+                                    name="DNI"
+                                    value={form.DNI}
                                     onChange={handleChange}
                                     required
-                                    disabled={disabledFields.includes("dni")}
-                                />
-                            </div>
-                            
-                            <div className="col-md-6">
-                                <label className="form-label fw-bold">Teléfono</label>
-                                <input
-                                    type="tel"
-                                    className={`form-control ${disabledFields.includes("telefono") ? "bg-light" : ""}`}
-                                    name="telefono"
-                                    value={form.telefono}
-                                    onChange={handleChange}
-                                    disabled={disabledFields.includes("telefono")}
+                                    disabled={disabledFields.includes("DNI")}
                                 />
                             </div>
                         </div>
 
-                        {/* Grupo 3: Contacto */}
+                        {/* Género */}
                         <div className="row g-3 mb-4">
-                            <div className="col-md-6">
-                                <label className="form-label fw-bold">Email</label>
-                                <input
-                                    type="email"
-                                    className={`form-control ${disabledFields.includes("email") ? "bg-light" : ""}`}
-                                    name="email"
-                                    value={form.email}
-                                    onChange={handleChange}
-                                    disabled={disabledFields.includes("email")}
-                                />
-                            </div>
-                            
-                            <div className="col-md-6">
-                                <label className="form-label fw-bold">Género</label>
-                                <input
-                                    type="text"
-                                    className={`form-control ${disabledFields.includes("genero") ? "bg-light" : ""}`}
-                                    name="genero"
-                                    value={form.genero}
-                                    onChange={handleChange}
-                                    disabled={disabledFields.includes("genero")}
-                                />
-                            </div>
+                        <div className="col-md-6">
+                            <label className="form-label fw-bold">Género <span className="text-danger">*</span></label>
+                            <select
+                            className={`form-select ${disabledFields.includes("genero") ? "bg-light" : ""}`}
+                            name="genero"
+                            value={form.genero}
+                            onChange={handleChange}
+                            required
+                            disabled={disabledFields.includes("genero")}
+                            >
+                            <option value="">Seleccione una opción</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="No binario">No binario</option>
+                            </select>
                         </div>
-
-                        {/* Grupo 4: Otros datos */}
+                        </div>
+                        {/* Otros datos */}
                         <div className="row g-3 mb-4">
                             <div className="col-md-6">
                                 <label className="form-label fw-bold">Fecha de Nacimiento</label>
@@ -225,7 +197,7 @@ export const PersonaForm: FC<Props> = ({
                                         onChange={handleChange}
                                         disabled={disabledFields.includes("donante")}
                                     />
-                                    <label className="form-check-label fw-bold">Donante de órganos</label>
+                                    <label className="form-check-label fw-bold">Donante</label>
                                 </div>
                             </div>
                         </div>

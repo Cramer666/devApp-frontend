@@ -64,7 +64,7 @@ export const PersonaList = () => {
                 <tbody>
                   {personas.map(persona => (
                     <tr key={persona.id}>
-                      <td>{persona.dni}</td>
+                      <td>{persona.DNI}</td>
                       <td>{persona.nombre}</td>
                       <td>{persona.apellido}</td>
                       <td>

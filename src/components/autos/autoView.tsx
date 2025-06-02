@@ -15,7 +15,7 @@ export const AutoView: FC = () => {
       getAutoById(id)
         .then(res => {
           setAuto(res.data);
-          return getPersonaById(res.data);
+          return getPersonaById(res.data.duenioId ?? "");
         })
         .then(res => setDuenio(res.data))
         .catch(() => navigate("/autos"));
@@ -26,7 +26,7 @@ export const AutoView: FC = () => {
 
   return (
     <div className="container mt-4">
-      <h2>Detalles del Auto</h2>
+      <h1 className= "navbar-brand text-black">Detalles del Auto</h1>
       <div className="card">
         <div className="card-body">
           <h5 className="card-title">{auto.marca} {auto.modelo}</h5>
