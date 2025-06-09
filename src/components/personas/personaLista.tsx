@@ -17,7 +17,8 @@ export const PersonaList = () => {
   const handleDelete = (id: string) => {
     if (window.confirm("¿Estas seguro que queres eliminar esta persona?")) {
       setLoading(true);
-      deletePersona(id).then(() => getPersonas().then(res => setPersonas(res.data)))
+      deletePersona(id)
+        .then(() => getPersonas().then(res => setPersonas(res.data)))
         .finally(() => setLoading(false));
     }
   };
@@ -27,7 +28,7 @@ export const PersonaList = () => {
       title="Lista de Personas"
       data={personas}
       columnas={[
-        { label: "DNI", key: "DNI" },
+        { label: "Dni", key: "dni" },
         { label: "Nombre", key: "nombre" },
         { label: "Apellido", key: "apellido" }
       ]}

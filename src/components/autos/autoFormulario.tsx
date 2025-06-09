@@ -5,11 +5,11 @@ import { Persona } from "../../models/persona";
 import { getAutoById, createAuto, updateAuto } from "../../services/autosServ";
 import { getPersonas } from "../../services/personasServ";
 import { GenericForm } from "../comun/formularioGenerico";
-import { Campo } from "../comun/formularioGenerico";
+import { Campo } from "../../components/comun/campo";
 
 export const AutoForm: FC = () => {
   const [form, setForm] = useState<Omit<Auto, "id">>({
-    patente: "", marca: "", modelo: "", anio: 0, color: "",
+    patente: "", marca: "", modelo: "", anio: Number(undefined), color: "",
     nroDeChasis: "", motor: "", duenioId: ""
   });
   const [personas, setPersonas] = useState<Persona[]>([]);
@@ -25,6 +25,7 @@ export const AutoForm: FC = () => {
         getPersonas(),
         isEditing && id ? getAutoById(id) : Promise.resolve({ data: null })
       ]);
+      console.log("Personas:", personasRes.data);
       setPersonas(personasRes.data);
       if (autoRes.data) setForm(autoRes.data);
       setLoading(false);
@@ -32,29 +33,39 @@ export const AutoForm: FC = () => {
     fetchData();
   }, [id, isEditing]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleChange = (e: React.ChangeEvent<any>) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: name === "anio" ? Number(value) : value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    if (isEditing && id) await updateAuto(id, form as Auto);
-    else await createAuto(form);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    if (isEditing && id) {
+      await updateAuto(id, form as Auto);
+    } else {
+      console.log("Datos que se envían al backend:", form);
+      await createAuto(form);
+    }
     navigate("/autos");
+  } catch (error) {
+    console.error("Error al crear/actualizar auto:", error);
+  } finally {
     setLoading(false);
-  };
+  }
+};
+
 
   const campos: Campo[] = [
     { tipo: "text", label: "Patente", name: "patente", required: true },
     { tipo: "text", label: "Marca", name: "marca", required: true },
     { tipo: "text", label: "Modelo", name: "modelo", required: true },
     { tipo: "number", label: "Año", name: "anio", required: true },
-    { tipo: "text", label: "Color", name: "color", required: true },
+    { tipo: "text", label: "Color", name: "color", required: false },
     { tipo: "text", label: "N° Chasis", name: "nroDeChasis", required: true },
-    { tipo: "text", label: "Motor", name: "motor", required: true },
+    { tipo: "text", label: "Motor", name: "motor", required: false },
     { tipo: "select", label: "Dueño", name: "duenioId", required: true, options: personas.map(p => ({
       label: `${p.nombre} ${p.apellido} (DNI: ${p.DNI})`, value: p.id
     }))}

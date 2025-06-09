@@ -1,58 +1,55 @@
 import React from "react";
 
-interface Props {
-  label: string;
+interface TextInputProps {
+  type: string;
   name: string;
-  value: string | number | boolean;
+  label: string;
+  value?: string | number;
+  checked?: boolean;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   required?: boolean;
   disabled?: boolean;
-  type?: string;
 }
 
-export const TextInput: React.FC<Props> = ({
-  label,
+export const TextInput: React.FC<TextInputProps> = ({
+  type,
   name,
+  label,
   value,
+  checked,
   onChange,
-  required = false,
-  disabled = false,
-  type = "text"
-}) => {
-  if (type === "checkbox") {
-    return (
-      <div className="form-check mb-3">
+  required,
+  disabled,
+}) => (
+  <div className="form-group form-check">
+    {type === "checkbox" ? (
+      <>
         <input
-          type="checkbox"
-          className="form-check-input"
-          name={name}
           id={name}
-          checked={Boolean(value)}
+          name={name}
+          type="checkbox"
+          checked={checked}
           onChange={onChange}
+          required={required}
           disabled={disabled}
+          className="form-check-input"
         />
-        <label className="form-check-label fw-bold" htmlFor={name}>
-          {label}
-        </label>
-      </div>
-    );
-  }
-
-  return (
-    <div className="mb-3">
-      <label className="form-label fw-bold" htmlFor={name}>
-        {label} {required && <span className="text-danger">*</span>}
-      </label>
-      <input
-        type={type}
-        className={`form-control ${disabled ? "bg-light" : ""}`}
-        name={name}
-        id={name}
-        value={value as string | number}
-        onChange={onChange}
-        required={required}
-        disabled={disabled}
-      />
-    </div>
-  );
-};
+        <label htmlFor={name} className="form-check-label">{label}</label>
+      </>
+    ) : (
+      <>
+        <label htmlFor={name}>{label}</label>
+        <input
+          id={name}
+          name={name}
+          type={type}
+          value={value}
+          onChange={onChange}
+          required={required}
+          disabled={disabled}
+          className="form-control"
+        />
+      </>
+    )}
+  </div>
+);

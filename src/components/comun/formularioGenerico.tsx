@@ -3,10 +3,9 @@ import { TextInput } from "./TextInput";
 import { SelectInput } from "./SelectInput";
 import { Campo } from "./campo";
 
-
 interface Props {
   campos: Campo[];
-  form: Record<string, string | number | boolean >;
+  form: Record<string, string | number | boolean | Date | null>;
   onChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;
@@ -17,6 +16,16 @@ interface Props {
   title?: string;
   navigateTo: () => void;
 }
+
+const normalizeValue = (value: string | number | boolean | Date | null): string | number => {
+  if (value instanceof Date) {
+    return value.toISOString().split("T")[0];
+  }
+  if (typeof value === "boolean") {
+    return value ? "true" : "false"; 
+  }
+  return value ?? "";
+};
 
 export const GenericForm: React.FC<Props> = ({
   campos,
@@ -38,27 +47,33 @@ export const GenericForm: React.FC<Props> = ({
         <div className="card-body">
           <form onSubmit={onSubmit}>
             <div className="row g-3 mb-4">
-              {campos.map((campo, idx) => {
-                const commonProps = {
-                  key: idx,
+             {campos.map((campo, idx) => {
+                const valor = form[campo.name];
+                const normalizedValue = normalizeValue(valor);
+                const restProps = {
                   name: campo.name,
                   label: campo.label,
-                  value: form[campo.name],
                   onChange,
                   required: campo.required,
-                  disabled: disabledFields.includes(campo.name)
+                  disabled: disabledFields.includes(campo.name),
                 };
 
                 if (campo.tipo === "select") {
                   return (
                     <div className="col-md-6" key={idx}>
-                      <SelectInput {...commonProps} options={campo.options || []} />
+                      <SelectInput key={idx} {...restProps} value={normalizedValue} options={campo.options || []} />
+                    </div>
+                  );
+                } else if (campo.tipo === "checkbox") {
+                  return (
+                    <div className="col-md-6" key={idx}>
+                      <TextInput key={idx} {...restProps} type="checkbox" checked={Boolean(valor)} />
                     </div>
                   );
                 } else {
                   return (
                     <div className="col-md-6" key={idx}>
-                      <TextInput {...commonProps} type={campo.tipo} />
+                      <TextInput key={idx} {...restProps} type={campo.tipo} value={normalizedValue} />
                     </div>
                   );
                 }

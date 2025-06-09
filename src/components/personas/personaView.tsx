@@ -4,25 +4,34 @@ import { Persona } from "../../models/persona";
 import { getPersonaById } from "../../services/personasServ";
 
 export const PersonaView: FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [persona, setPersona] = useState<Persona | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (id) {
-      getPersonaById(id)
-        .then((res) => {
+    if (!id) {
+      setError("ID inválido");
+      setLoading(false);
+      return;
+    }
+
+    getPersonaById(id)
+      .then((res) => {
+        if (res.data) {
           console.log("Datos recibidos:", res.data);
           setPersona(res.data);
-        })
-        .catch((err) => {
-          console.error("Error al obtener persona:", err);
-          setError("No se pudo cargar la persona.");
-        })
-        .finally(() => setLoading(false));
-    }
+        } else {
+          setError("Persona no encontrada.");
+        }
+      })
+      .catch((err) => {
+        console.error("Error al obtener persona:", err);
+        setError("No se pudo cargar la persona.");
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
   if (loading) return <div className="text-center">Cargando...</div>;
@@ -31,7 +40,7 @@ export const PersonaView: FC = () => {
 
   return (
     <div className="container mt-4">
-      <h1 className= "navbar-brand text-black">Detalles de Persona</h1>
+      <h1 className="navbar-brand text-black">Detalles de Persona</h1>
       <div className="card">
         <div className="card-body">
           <h5 className="card-title">
@@ -39,7 +48,7 @@ export const PersonaView: FC = () => {
           </h5>
           <div className="row">
             <div className="col-md-6">
-              <p><strong>DNI:</strong> {persona.DNI}</p>
+              <p><strong>DNI:</strong> {persona.dni}</p>
               <p><strong>Donante:</strong> {persona.donante ? "Sí" : "No"}</p>
               <p><strong>Género:</strong> {persona.genero || "-"}</p>
             </div>
@@ -63,17 +72,17 @@ export const PersonaView: FC = () => {
 
       <div className="mt-3">
         <button
-          className="btn btn-primary"
+          className="btn btn-primary me-2"
           onClick={() => navigate(`/personas/editar/${persona.id}`)}
         >
           Editar
         </button>
-                  <button 
-            className="btn btn-secondary"
-            onClick={() => navigate("/personas")}
-          >
-            Volver
-          </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => navigate("/personas")}
+        >
+          Volver
+        </button>
       </div>
     </div>
   );

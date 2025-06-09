@@ -1,45 +1,48 @@
 import React from "react";
 
 interface Option {
+  value: string | number;
   label: string;
-  value: string;
 }
 
 interface Props {
-  label: string;
   name: string;
-  value: string | number | boolean;
+  label: string;
+  value: string | number | undefined | null;
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
-  options: Option[];
   required?: boolean;
   disabled?: boolean;
+  options: Option[];
 }
 
 export const SelectInput: React.FC<Props> = ({
-  label,
   name,
+  label,
   value,
   onChange,
-  options,
-  required = false,
-  disabled = false
-}) => (
-  <div className="mb-3">
-    <label className="form-label fw-bold">
-      {label} {required && <span className="text-danger">*</span>}
-    </label>
-    <select
-      className={`form-select ${disabled ? "bg-light" : ""}`}
-      name={name}
-      value={String(value)}
-      onChange={onChange}
-      required={required}
-      disabled={disabled}
-    >
-      <option value="">Seleccione una opción</option>
-      {options.map((opt, idx) => (
-        <option key={idx} value={opt.value}>{opt.label}</option>
-      ))}
-    </select>
-  </div>
-);
+  required,
+  disabled,
+  options
+}) => {
+  return (
+    <div className="form-group">
+      <label htmlFor={name} className="form-label">{label}</label>
+      <select
+        id={name}
+        name={name}
+        className="form-select"
+        value={value ?? ""}
+        onChange={onChange}
+        required={required}
+        disabled={disabled}
+      >
+        <option value="">Seleccione una opción</option>
+        {options.map((opt, idx) => (
+          <option key={idx} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};

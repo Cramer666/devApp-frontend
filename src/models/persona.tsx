@@ -1,14 +1,13 @@
 import { Auto } from "./auto";
-
-type  Genero = 'Masculino' | 'Femenino' | 'No binario';
+import { genero } from "./generoEnum";
 
 export interface Persona {
     id: string;
     nombre: string;
     apellido: string;
-    DNI: string;
+    dni: string;
     fechaDeNacimiento: Date;
-    genero: Genero;
+    genero: genero ;
     donante: boolean;
     vehiculo: Auto[];
 }
