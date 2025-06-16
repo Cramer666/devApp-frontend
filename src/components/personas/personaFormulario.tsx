@@ -11,7 +11,7 @@ export const PersonaForm: FC = () => {
     nombre: "",
     apellido: "",
     dni: "",
-    fechaDeNacimiento: new Date(),
+    fechaNacimiento: new Date(),
     genero: genero.Femenino,
     donante: false,
     vehiculo: []
@@ -20,7 +20,7 @@ export const PersonaForm: FC = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const isEditing = Boolean(id);
+  const isEditing = id;
 
   const formatDateInput = (date: Date) => {
     if (!date) return "";
@@ -60,21 +60,11 @@ const handleSubmit = async (e: React.FormEvent) => {
   setLoading(true);
 
   try {
-    const fechaFormateada =
-      form.fechaDeNacimiento instanceof Date && !isNaN(form.fechaDeNacimiento.getTime())
-        ? form.fechaDeNacimiento.toISOString().split("T")[0]
-        : "";
-
-    const payload: Omit<Persona, "id"> = {
-      ...form,
-      fechaDeNacimiento: fechaFormateada as unknown as Date
-    };
 
     if (isEditing && id) {
-      await updatePersona(id, payload);
+      await updatePersona(id, form);
     } else {
-      console.log("Payload a enviar:", payload);
-      await createPersona(payload); 
+      await createPersona(form); 
     }
 
     navigate("/personas");
@@ -85,11 +75,12 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 };
 
+
   const formFiltered: Record<string, string | boolean| genero> = {
     nombre: form.nombre,
     apellido: form.apellido,
     dni: form.dni,
-    fechaDeNacimiento: formatDateInput(form.fechaDeNacimiento),
+    fechaDeNacimiento: formatDateInput(form.fechaNacimiento),
     genero: form.genero,
     donante: form.donante ?? false
   };
@@ -100,7 +91,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     { tipo: "text", label: "dni", name: "dni", required: true },
     {
       tipo: "select",
-      label: "Género",
+      label: "Genero",
       name: "genero",
       required: true,
       options: [

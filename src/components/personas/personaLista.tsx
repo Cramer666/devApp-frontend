@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Persona } from "../../models/persona";
 import { getPersonas, deletePersona } from "../../services/personasServ";
-import { useNavigate } from "react-router-dom";
 import { GenericList } from "../comun/listaGenerica";
 
 export const PersonaList = () => {
@@ -9,16 +9,29 @@ export const PersonaList = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const cargarPersonas = async () => {
     setLoading(true);
-    getPersonas().then(res => setPersonas(res.data)).finally(() => setLoading(false));
+    try {
+      const res = await getPersonas();
+      console.log("PERSONAS:", res.data);
+      setPersonas(res.data);
+    } catch (err) {
+      console.error("Error al cargar personas:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    cargarPersonas();
   }, []);
 
   const handleDelete = (id: string) => {
-    if (window.confirm("¿Estas seguro que queres eliminar esta persona?")) {
+    if (window.confirm("¿Querés eliminar esta persona?")) {
       setLoading(true);
       deletePersona(id)
-        .then(() => getPersonas().then(res => setPersonas(res.data)))
+        .then(() => cargarPersonas())
+        .catch(err => console.error(err))
         .finally(() => setLoading(false));
     }
   };
@@ -28,14 +41,14 @@ export const PersonaList = () => {
       title="Lista de Personas"
       data={personas}
       columnas={[
-        { label: "Dni", key: "dni" },
         { label: "Nombre", key: "nombre" },
-        { label: "Apellido", key: "apellido" }
+        { label: "Apellido", key: "apellido" },
+        { label: "DNI", key: "dni" }
       ]}
       loading={loading}
-      onVer={(p) => navigate(`/personas/${p.id}`)}
-      onEditar={(p) => navigate(`/personas/editar/${p.id}`)}
-      onEliminar={(p) => handleDelete(p.id)}
+      onVer={(persona) => navigate(`/personas/${persona.id}`)}
+      onEditar={(persona) => navigate(`/personas/editar/${persona.id}`)}
+      onEliminar={(persona) => handleDelete(persona.id)}
       onCreate={() => navigate("/personas/crear")}
     />
   );

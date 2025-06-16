@@ -1,5 +1,5 @@
 export interface Campo {
-  tipo: "text" | "number" | "select" | "date" | "checkbox";
+  tipo: "text" | "number" | "select" | "date" | "checkbox"| "string";
   label: string;
   name: string;
   required?: boolean;

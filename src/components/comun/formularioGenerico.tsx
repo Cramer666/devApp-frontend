@@ -11,7 +11,7 @@ interface Props {
   >;
   onSubmit: React.FormEventHandler;
   loading?: boolean;
-  isEditing?: boolean;
+  isEditing?: string;
   disabledFields?: string[];
   title?: string;
   navigateTo: () => void;

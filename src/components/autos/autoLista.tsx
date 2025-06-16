@@ -1,4 +1,3 @@
-// 📁 src/components/AutoList.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auto } from "../../models/auto";

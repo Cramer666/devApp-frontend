@@ -6,7 +6,7 @@ export interface Persona {
     nombre: string;
     apellido: string;
     dni: string;
-    fechaDeNacimiento: Date;
+    fechaNacimiento: Date;
     genero: genero ;
     donante: boolean;
     vehiculo: Auto[];

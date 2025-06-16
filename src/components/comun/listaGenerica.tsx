@@ -14,7 +14,7 @@ interface Props<T> {
   onCreate?: () => void;
 }
 
-export const GenericList = <T extends { id: string | number }>({
+export const GenericList = <T extends { id?: string | number; _id?: string | number }>({
   data,
   columnas,
   onVer,
@@ -22,7 +22,7 @@ export const GenericList = <T extends { id: string | number }>({
   onEliminar,
   loading = false,
   title = "Lista",
-  onCreate
+  onCreate,
 }: Props<T>) => (
   <div className="container mt-4">
     <div className="card">
@@ -46,24 +46,46 @@ export const GenericList = <T extends { id: string | number }>({
             <table className="table table-striped table-hover table-bordered">
               <thead className="table-dark">
                 <tr>
-                  {columnas.map((col, idx) => (
-                    <th key={idx}>{col.label}</th>
+                  {columnas.map((col) => (
+                    <th key={col.key}>{col.label}</th>
                   ))}
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {data.map(item => (
-                  <tr key={item.id}>
-                    {columnas.map((col, idx) => (
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      <td key={idx}>{(item as any)[col.key]}</td>
+                {data.map((item) => (
+                  <tr key={String(item.id ?? item._id)}>
+                    {columnas.map((col) => (
+                      <td key={col.key}>
+                        {String(item[col.key as keyof T])}
+                      </td>
                     ))}
                     <td>
                       <div className="d-flex gap-2">
-                        {onVer && <button className="btn btn-info btn-sm" onClick={() => onVer(item)}>Ver</button>}
-                        {onEditar && <button className="btn btn-warning btn-sm text-white" onClick={() => onEditar(item)}>Editar</button>}
-                        {onEliminar && <button className="btn btn-danger btn-sm" onClick={() => onEliminar(item)}>Eliminar</button>}
+                        {onVer && (
+                          <button
+                            className="btn btn-info btn-sm"
+                            onClick={() => onVer(item)}
+                          >
+                            Ver
+                          </button>
+                        )}
+                        {onEditar && (
+                          <button
+                            className="btn btn-warning btn-sm text-white"
+                            onClick={() => onEditar(item)}
+                          >
+                            Editar
+                          </button>
+                        )}
+                        {onEliminar && (
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => onEliminar(item)}
+                          >
+                            Eliminar
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
