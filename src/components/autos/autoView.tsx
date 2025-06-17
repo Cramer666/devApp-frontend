@@ -4,12 +4,15 @@ import { Auto } from "../../models/auto";
 import { getAutoById } from "../../services/autosServ";
 import { getPersonaById } from "../../services/personasServ";
 
+//Los handle_X son funciones que "manejan" o "se encargan de"
+// ciertas acciones del usuario.
+
 export const AutoView: FC = () => {
   const [auto, setAuto] = useState<Auto | null>(null);
   const [duenio, setDuenio] = useState<{ nombre: string, apellido: string } | null>(null);
   const { id } = useParams();
   const navigate = useNavigate();
-
+//cuando se carga, sale useEffect y ej. el codigo, es un hook medio para acc.secundarias.
   useEffect(() => {
     if (id) {
       getAutoById(id)

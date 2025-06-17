@@ -6,7 +6,8 @@ import { getAutoById, createAuto, updateAuto } from "../../services/autosServ";
 import { getPersonas } from "../../services/personasServ";
 import { GenericForm } from "../comun/formularioGenerico";
 import { Campo } from "../../components/comun/campo";
-
+//Los handle_X son funciones que "manejan" o "se encargan de"
+// ciertas acciones del usuario.
 export const AutoForm: FC = () => {
   const [form, setForm] = useState<Omit<Auto, "id">>({
     patente: "",
@@ -24,7 +25,7 @@ export const AutoForm: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = String(id);
-
+//cuando se carga, sale useEffect y ej. el codigo, es un hook medio para acc.secundarias.
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -51,7 +52,7 @@ export const AutoForm: FC = () => {
     };
     fetchData();
   }, [id, isEditing]);
-
+//"Maneja los cambios" ponele, como dice la palabra xD
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -61,7 +62,7 @@ export const AutoForm: FC = () => {
       [name]: name === "anio" ? Number(value) : value
     }));
   };
-
+//maneja el envio de formularios, crea o actualiza los autos...
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

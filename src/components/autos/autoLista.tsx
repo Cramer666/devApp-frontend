@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Auto } from "../../models/auto";
 import { getAutos, deleteAuto } from "../../services/autosServ";
 import { GenericList } from "../comun/listaGenerica";
-
+//Los handle_X son funciones que "manejan" o "se encargan de"
+// ciertas acciones del usuario.
 export const AutoList = () => {
   const [autos, setAutos] = useState<Auto[]>([]);
   const [loading, setLoading] = useState(false);
@@ -20,11 +21,12 @@ export const AutoList = () => {
       setLoading(false);
     }
   };
-
+//cuando se carga, sale useEffect y ej. el codigo, 
+// es un hook medio para acc.secundarias aveces.
   useEffect(() => {
     cargarAutos();
   }, []);
-
+//Es como un encargado de eliminar de autos (?
   const handleDelete = (id: string) => {
     if (window.confirm("¿Queres eliminar este auto?")) {
       setLoading(true);

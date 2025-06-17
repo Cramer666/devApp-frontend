@@ -2,7 +2,11 @@ import React from "react";
 import { TextInput } from "./TextInput";
 import { SelectInput } from "./SelectInput";
 import { Campo } from "./campo";
+//Acepta cualquier campo, maneja cualquier dato, sirve para crear o editar, es el 
+//terreneitor de los form universales we...
 
+
+//Son como los "parámetros" que le paso a x componente...
 interface Props {
   campos: Campo[];
   form: Record<string, string | number | boolean | Date | null>;
@@ -16,7 +20,7 @@ interface Props {
   title?: string;
   navigateTo: () => void;
 }
-
+//Agarra cualquier valor raro o complicado y convertirlo a un formato good
 const normalizeValue = (value: string | number | boolean | Date | null): string | number => {
   if (value instanceof Date) {
     return value.toISOString().split("T")[0];

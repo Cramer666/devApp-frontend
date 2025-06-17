@@ -1,10 +1,12 @@
 import React from "react";
 
+//Es como una plantilla inteligente para hacer menus desplegables.
 interface Option {
   value: string | number;
   label: string;
 }
 
+//Son como los "parámetros" que le paso a x componente...
 interface Props {
   name: string;
   label: string;

@@ -1,8 +1,11 @@
+//Aca se pueden mostrar cualquier tipo de datos, tipo una plantilla de word (?)
+
 interface Columna {
   label: string;
   key: string;
 }
 
+//Son como los "parámetros" que le paso a x componente...
 interface Props<T> {
   data: T[];
   columnas: Columna[];

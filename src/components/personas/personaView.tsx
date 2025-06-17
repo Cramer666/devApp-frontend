@@ -4,7 +4,8 @@ import { Persona } from "../../models/persona";
 import { Auto } from "../../models/auto";
 import { getPersonaById } from "../../services/personasServ";
 import { getDueniosById } from "../../services/autosServ";
-
+//Los handle_X son funciones que "manejan" o "se encargan de"
+// ciertas acciones del usuario.
 export const PersonaView: FC = () => {
   const [persona, setPersona] = useState<Persona | null>(null);
   const [autos, setAutos] = useState<Auto[]>([]);
@@ -16,7 +17,7 @@ export const PersonaView: FC = () => {
       getPersonaById(id)
         .then(res => {
           setPersona(res.data);
-          return getDueniosById(id);
+          return  getDueniosById (res.data.id ?? "");
         })
         .then(res => setAutos(res.data))
         .catch(() => navigate("/personas"));
@@ -33,10 +34,6 @@ export const PersonaView: FC = () => {
           <h5 className="card-title">{persona.nombre} {persona.apellido}</h5>
           <p><strong>DNI:</strong> {persona.dni}</p>
           <p><strong>Fecha Nacimiento:</strong> {new Date(persona.fechaNacimiento).toLocaleDateString()}</p>
-          {persona.genero && <p><strong>Género:</strong> {persona.genero}</p>}
-          {typeof persona.donante === "boolean" && (
-            <p><strong>Donante:</strong> {persona.donante ? "Sí" : "No"}</p>
-          )}
         </div>
       </div>
 

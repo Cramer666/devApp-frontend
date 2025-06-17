@@ -1,5 +1,8 @@
 import React from "react";
 
+//me deja renderizar cualquier tipo de campo del formulario
+//sin tener q hacer un componente nuevo cada vez
+
 interface TextInputProps {
   type: string;
   name: string;
