@@ -9,7 +9,7 @@ import { Campo } from "./campo";
 //Son como los "parámetros" que le paso a x componente...
 interface Props {
   campos: Campo[];
-  form: Record<string, string | number | boolean | Date | null>;
+  form: Record<string, string | number | boolean | Date | null| undefined>;
   onChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;
@@ -21,7 +21,7 @@ interface Props {
   navigateTo: () => void;
 }
 //Agarra cualquier valor raro o complicado y convertirlo a un formato good
-const normalizeValue = (value: string | number | boolean | Date | null): string | number => {
+const normalizeValue = (value: string | number | boolean | Date | null| undefined): string | number => {
   if (value instanceof Date) {
     return value.toISOString().split("T")[0];
   }

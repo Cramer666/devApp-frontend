@@ -34,11 +34,7 @@ export const PersonaView: FC = () => {
           <h5 className="card-title">{persona.nombre} {persona.apellido}</h5>
           <p><strong>DNI:</strong> {persona.dni}</p>
           <p><strong>Fecha Nacimiento:</strong> {new Date(persona.fechaNacimiento).toLocaleDateString()}</p>
-        </div>
-      </div>
-
-      <h3>Autos asociados</h3>
-      {autos.length === 0 ? (
+          <p><strong>Autos asociados:</strong></p>{autos.length === 0 ? (
         <p>No tiene autos asociados.</p>
       ) : (
         <ul className="list-group">
@@ -54,7 +50,9 @@ export const PersonaView: FC = () => {
           ))}
         </ul>
       )}
-
+        
+        </div>
+      </div>
       <button
         className="btn btn-secondary mt-3"
         onClick={() => navigate("/personas")}

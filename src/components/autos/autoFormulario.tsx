@@ -13,7 +13,7 @@ export const AutoForm: FC = () => {
     patente: "",
     marca: "",
     modelo: "",
-    anio: 0,
+    anio: Number(""),
     color: "",
     nroDeChasis: "",
     motor: "",
@@ -25,6 +25,7 @@ export const AutoForm: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = String(id);
+
 //cuando se carga, sale useEffect y ej. el codigo, es un hook medio para acc.secundarias.
   useEffect(() => {
     const fetchData = async () => {

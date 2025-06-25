@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Auto } from "../models/auto";
-
+//Es un intermediario ponele entre el front) y el back...
 
 const API_URL = "http://localhost:3000/autos";
 const URL_PERSONAS="http://localhost:3000/personas";

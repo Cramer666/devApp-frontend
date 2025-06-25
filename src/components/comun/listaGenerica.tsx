@@ -5,7 +5,7 @@ interface Columna {
   key: string;
 }
 
-//Son como los "parámetros" que le paso a x componente...
+//Son como los "parametros" que le paso a x componente...
 interface Props<T> {
   data: T[];
   columnas: Columna[];
@@ -17,7 +17,7 @@ interface Props<T> {
   onCreate?: () => void;
 }
 
-export const GenericList = <T extends { id?: string | number; _id?: string | number }>({
+export const GenericList = <T extends { id?: string | number,_id?: string | number}>({
   data,
   columnas,
   onVer,
@@ -57,7 +57,7 @@ export const GenericList = <T extends { id?: string | number; _id?: string | num
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={String(item.id ?? item._id)}>
+                  <tr key={String(item.id ?? item.id)}>
                     {columnas.map((col) => (
                       <td key={col.key}>
                         {String(item[col.key as keyof T])}

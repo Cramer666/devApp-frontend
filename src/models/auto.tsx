@@ -2,7 +2,7 @@ export interface Auto {
     id: string;
     marca: string;
     modelo: string;
-    anio: number;
+    anio: number | undefined;
     patente: string;
     color: string;
     nroDeChasis: string;
