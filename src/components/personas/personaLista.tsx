@@ -13,7 +13,6 @@ export const PersonaList = () => {
     setLoading(true);
     try {
       const res = await getPersonas();
-      console.log("PERSONAS:", res.data);
       setPersonas(res.data);
     } catch (err) {
       console.error("Error al cargar personas:", err);
@@ -27,7 +26,7 @@ export const PersonaList = () => {
   }, []);
 
   const handleDelete = (id: string) => {
-    if (window.confirm("¿Querés eliminar esta persona?")) {
+    if (window.confirm("¿Estás seguro de eliminar esta persona?")) {
       setLoading(true);
       deletePersona(id)
         .then(() => cargarPersonas())
@@ -37,7 +36,7 @@ export const PersonaList = () => {
   };
 
   return (
-    <GenericList
+    <GenericList<Persona>
       title="Lista de Personas"
       data={personas}
       columnas={[
@@ -46,9 +45,24 @@ export const PersonaList = () => {
         { label: "DNI", key: "dni" }
       ]}
       loading={loading}
-      onVer={(persona) => navigate(`/personas/${persona.id}`)}
-      onEditar={(persona) => navigate(`/personas/editar/${persona.id}`)}
-      onEliminar={(persona) => handleDelete(persona.id)}
+      actions={[
+        {
+          label: "Ver",
+          color: "info",
+          onClick: (persona) => navigate(`/personas/${persona.id}`)
+        },
+        {
+          label: "Editar",
+          color: "warning",
+          onClick: (persona) => navigate(`/personas/editar/${persona.id}`)
+        },
+        {
+          label: "Eliminar",
+          color: "danger",
+          onClick: (persona) => handleDelete(persona.id)
+        }
+      ]}
+      showCreateButton={true}
       onCreate={() => navigate("/personas/crear")}
     />
   );

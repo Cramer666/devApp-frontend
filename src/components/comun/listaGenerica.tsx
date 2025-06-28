@@ -1,39 +1,42 @@
-//Aca se pueden mostrar cualquier tipo de datos, tipo una plantilla de word (?)
-
 interface Columna {
   label: string;
   key: string;
 }
 
-//Son como los "parametros" que le paso a x componente...
+interface ActionButton<T> {
+  label: string;
+  color: string;
+  onClick: (item: T) => void;
+  disabled?: (item: T) => boolean;
+  hidden?: (item: T) => boolean;
+}
+
 interface Props<T> {
   data: T[];
   columnas: Columna[];
-  onVer?: (item: T) => void;
-  onEditar?: (item: T) => void;
-  onEliminar?: (item: T) => void;
+  actions?: ActionButton<T>[];
   loading?: boolean;
   title?: string;
+  showCreateButton?: boolean;
   onCreate?: () => void;
 }
 
-export const GenericList = <T extends { id?: string | number,_id?: string | number}>({
+export const GenericList = <T extends { id?: string | number, _id?: string | number }>({
   data,
   columnas,
-  onVer,
-  onEditar,
-  onEliminar,
+  actions = [],
   loading = false,
   title = "Lista",
-  onCreate,
+  showCreateButton = false,
+  onCreate
 }: Props<T>) => (
   <div className="container mt-4">
     <div className="card">
       <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h3 className="mb-0">{title}</h3>
-        {onCreate && (
-          <button className="btn btn-light btn-sm" onClick={onCreate}>
-            + Nuevo
+        {showCreateButton && onCreate && (
+          <button className="btn btn-success btn-sm" onClick={onCreate}>
+            Agregar
           </button>
         )}
       </div>
@@ -52,45 +55,35 @@ export const GenericList = <T extends { id?: string | number,_id?: string | numb
                   {columnas.map((col) => (
                     <th key={col.key}>{col.label}</th>
                   ))}
-                  <th>Acciones</th>
+                  {actions.length > 0 && <th>Acciones</th>}
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={String(item.id ?? item.id)}>
+                  <tr key={String(item.id ?? item._id)}>
                     {columnas.map((col) => (
                       <td key={col.key}>
                         {String(item[col.key as keyof T])}
                       </td>
                     ))}
-                    <td>
-                      <div className="d-flex gap-2">
-                        {onVer && (
-                          <button
-                            className="btn btn-info btn-sm"
-                            onClick={() => onVer(item)}
-                          >
-                            Ver
-                          </button>
-                        )}
-                        {onEditar && (
-                          <button
-                            className="btn btn-warning btn-sm text-white"
-                            onClick={() => onEditar(item)}
-                          >
-                            Editar
-                          </button>
-                        )}
-                        {onEliminar && (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => onEliminar(item)}
-                          >
-                            Eliminar
-                          </button>
-                        )}
-                      </div>
-                    </td>
+                    {actions.length > 0 && (
+                      <td>
+                        <div className="d-flex gap-2">
+                          {actions.map((action, index) => (
+                            !action.hidden?.(item) && (
+                              <button
+                                key={index}
+                                className={`btn btn-${action.color} btn-sm`}
+                                onClick={() => action.onClick(item)}
+                                disabled={action.disabled?.(item)}
+                              >
+                                {action.label}
+                              </button>
+                            )
+                          ))}
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

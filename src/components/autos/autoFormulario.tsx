@@ -13,7 +13,7 @@ export const AutoForm: FC = () => {
     patente: "",
     marca: "",
     modelo: "",
-    anio: Number(""),
+    anio: 0,
     color: "",
     nroDeChasis: "",
     motor: "",
@@ -25,6 +25,8 @@ export const AutoForm: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEditing = String(id);
+  const searchParams = new URLSearchParams(window.location.search);
+  const duenioId = searchParams.get("duenioId");
 
 //cuando se carga, sale useEffect y ej. el codigo, es un hook medio para acc.secundarias.
   useEffect(() => {
@@ -47,13 +49,16 @@ export const AutoForm: FC = () => {
           motor: autoRes.data.motor ?? "",
           duenioId: autoRes.data.duenioId ?? "",
         });
+      }else if (duenioId) {
+        setForm(prev => ({ ...prev, duenioId }));
       }
 
       setLoading(false);
     };
     fetchData();
-  }, [id, isEditing]);
-//"Maneja los cambios" ponele, como dice la palabra xD
+  }, [id, isEditing, duenioId]);
+
+ //"Maneja los cambios" ponele, como dice la palabra xD
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {

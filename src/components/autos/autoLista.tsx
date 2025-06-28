@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Auto } from "../../models/auto";
-import { getAutos, deleteAuto } from "../../services/autosServ";
+import { getAutos } from "../../services/autosServ";
 import { GenericList } from "../comun/listaGenerica";
-//Los handle_X son funciones que "manejan" o "se encargan de"
-// ciertas acciones del usuario.
+
 export const AutoList = () => {
   const [autos, setAutos] = useState<Auto[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,19 +20,14 @@ export const AutoList = () => {
       setLoading(false);
     }
   };
-//cuando se carga, sale useEffect y ej. el codigo, 
-// es un hook medio para acc.secundarias aveces.
+
   useEffect(() => {
     cargarAutos();
   }, []);
-//Es como un encargado de eliminar de autos (?
-  const handleDelete = (id: string) => {
-    if (window.confirm("¿Queres eliminar este auto?")) {
-      setLoading(true);
-      deleteAuto(id)
-        .then(() => cargarAutos())
-        .catch(err => console.error(err))
-        .finally(() => setLoading(false));
+
+  const handleViewOwner = (auto: Auto) => {
+    if (auto.duenioId) {
+      navigate(`/personas/${auto.duenioId}`);
     }
   };
 
@@ -48,10 +42,15 @@ export const AutoList = () => {
         { label: "Año", key: "anio" }
       ]}
       loading={loading}
-      onVer={(auto) => navigate(`/autos/${auto.id}`)}
-      onEditar={(auto) => navigate(`/autos/editar/${auto.id}`)}
-      onEliminar={(auto) => handleDelete(auto.id)}
-      onCreate={() => navigate("/autos/crear")}
+      actions={[
+        {
+          label: "Ver Dueño",
+          color: "light",
+          onClick: handleViewOwner,
+          disabled: (auto) => !auto.duenioId
+        }
+      ]}
+      showCreateButton={false} // Desactiva el botón de creación
     />
   );
 };

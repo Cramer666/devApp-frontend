@@ -13,17 +13,25 @@ export const AutoView: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 //cuando se carga, sale useEffect y ej. el codigo, es un hook medio para acc.secundarias.
-  useEffect(() => {
-    if (id) {
-      getAutoById(id)
-        .then(res => {
-          setAuto(res.data);
-          return getPersonaById(res.data.duenioId ?? "");
-        })
-        .then(res => setDuenio(res.data))
-        .catch(() => navigate("/autos"));
-    }
-  }, [id, navigate]);
+useEffect(() => {
+  if (id) {
+    getAutoById(id)
+      .then(res => {
+        setAuto(res.data);
+        if (res.data.duenioId) {
+          return getPersonaById(res.data.duenioId);
+        } else {
+          return null;
+        }
+      })
+      .then(res => {
+        if (res) setDuenio(res.data);
+      })
+      .catch(() => navigate("/autos"));
+  }
+}, [id, navigate]);
+
+
 
   if (!auto) return <div className="text-center">Cargando...</div>;
 
@@ -42,7 +50,8 @@ export const AutoView: FC = () => {
             <div className="col-md-6">
               <p><strong>N° Chasis:</strong> {auto.nroDeChasis}</p>
               <p><strong>Motor:</strong> {auto.motor}</p>
-              <p><strong>Dueño:</strong> {duenio?.nombre} {duenio?.apellido}</p>
+               <strong>Dueño:</strong>{" "}
+                  {duenio ? `${duenio.nombre} ${duenio.apellido}` : "Sin asignar"}
             </div>
           </div>
           <button 
